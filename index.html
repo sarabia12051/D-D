@@ -11,36 +11,71 @@
     <style>
         :root { --primary: #2e7d32; --gold: #fbc02d; --bg: #0a0f0b; --card: #1b261e; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #e8f5e9; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .container { background: var(--card); padding: 20px; border-radius: 15px; border: 2px solid var(--primary); width: 100%; max-width: 480px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        
+        /* Fixed boundary issues and centered content */
+        .container { 
+            background: var(--card); 
+            padding: 25px; 
+            border-radius: 15px; 
+            border: 2px solid var(--primary); 
+            width: 100%; 
+            max-width: 420px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+            box-sizing: border-box; /* Ensures padding doesn't push width out */
+        }
+
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
         .stat-box { background: #0c140e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--primary); }
         .stat-box b { color: var(--gold); font-size: 1.2em; display: block; }
+        
         button { background: var(--primary); border: none; padding: 16px; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1.1rem; }
         .hidden { display: none; }
-        select, input { width: 100%; padding: 12px; margin: 8px 0; background: #050a06; color: white; border: 1px solid var(--primary); border-radius: 8px; font-size: 1rem; }
+
+        /* Adjusted padding and width to keep arrows and text inside boundaries */
+        select, input { 
+            width: 100%; 
+            padding: 12px 15px; 
+            margin: 8px 0; 
+            background: #050a06; 
+            color: white; 
+            border: 1px solid var(--primary); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            box-sizing: border-box; 
+            appearance: none; /* Helps with custom arrow positioning on some phones */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232e7d32%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+        }
+        
+        input { background-image: none; } /* No arrow for the name box */
+
         #modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border: 3px solid var(--gold); border-radius: 15px; z-index: 100; width: 85%; max-width: 350px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99; }
         .feature-item { margin-bottom: 10px; padding: 12px; border-left: 4px solid var(--gold); background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.9em; }
         .feature-item b { color: var(--gold); display: block; margin-bottom: 4px; }
-        h1 { color: var(--primary); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* Updated Header Text */
+        .header-title { color: var(--primary); text-align: center; margin-bottom: 20px; font-size: 2.2em; font-weight: bold; text-transform: uppercase; letter-spacing: 4px; }
     </style>
 </head>
 <body>
 
 <div id="setup-screen" class="container">
-    <h1>Hunter Registry</h1>
+    <div class="header-title">RANGER</div>
     <input type="text" id="char-name" placeholder="Character Name...">
     
-    <label>Choose Race</label>
+    <label style="font-size: 0.9em; color: var(--primary); font-weight: bold;">CHOOSE RACE</label>
     <select id="race-select">
         <option value="Human">Human (+1 All Stats)</option>
         <option value="Elf">Elf (+2 Dex, Darkvision)</option>
-        <option value="Wood Elf">Wood Elf (+2 Dex, +1 Wis, +5ft Speed)</option>
-        <option value="Dwarf">Dwarf (+2 Con, Advantage vs Poison)</option>
-        <option value="Half-Orc">Half-Orc (+2 Str, +1 Con, Relentless)</option>
+        <option value="Wood Elf">Wood Elf (+2 Dex, +1 Wis)</option>
+        <option value="Dwarf">Dwarf (+2 Con, Resilient)</option>
+        <option value="Half-Orc">Half-Orc (+2 Str, +1 Con)</option>
     </select>
 
-    <label>Choose Background</label>
+    <label style="font-size: 0.9em; color: var(--primary); font-weight: bold;">CHOOSE BACKGROUND</label>
     <select id="bg-select">
         <option value="Wayfarer">Wayfarer (Feat: Alert)</option>
         <option value="Soldier">Soldier (Feat: Savage Attacker)</option>
@@ -53,9 +88,9 @@
 </div>
 
 <div id="main-sheet" class="container hidden">
-    <h1 id="disp-name" style="margin:0; font-size: 1.5em;"></h1>
+    <h1 id="disp-name" style="margin:0; font-size: 1.5em; text-align:center;"></h1>
     <p style="text-align:center; color:#888; margin-top:5px;">
-        Level <span id="disp-lvl"></span> <span id="disp-race"></span> Ranger (<span id="disp-bg"></span>)
+        Level <span id="disp-lvl"></span> <span id="disp-race"></span> Hunter (<span id="disp-bg"></span>)
     </p>
 
     <div class="stat-grid" id="stat-display"></div>
@@ -66,11 +101,11 @@
         <div class="stat-box" style="flex:1;">Prof: <strong id="disp-prof"></strong></div>
     </div>
 
-    <strong>Hunter's Features & Talents:</strong>
+    <strong>Abilities & Features:</strong>
     <div id="features-list" style="margin-top:10px; height: 280px; overflow-y: auto;"></div>
 
     <button onclick="triggerLevelUp()">LEVEL UP</button>
-    <button style="background:#422; margin-top:20px; font-size: 0.8em;" onclick="reset()">RETIRE CHARACTER</button>
+    <button style="background:#422; margin-top:20px; font-size: 0.8em;" onclick="reset()">DELETE CHARACTER</button>
 </div>
 
 <div id="modal-overlay" class="overlay hidden"></div>
@@ -83,12 +118,12 @@
 <script>
     let hero = null;
     const rangerBook = {
-        2: { title: "Fighting Style", options: { "Archery": "+2 to ranged attack rolls.", "Defense": "+1 to Armor Class.", "Dueling": "+2 to damage with 1-handed melee weapons." }},
-        3: { title: "Hunter's Prey", options: { "Colossus Slayer": "Deal +1d8 damage if the target is already hurt.", "Giant Killer": "Use Reaction to counter-attack Large creatures.", "Horde Breaker": "Extra attack against a 2nd target within 5ft." }},
-        7: { title: "Defensive Tactics", options: { "Escape the Horde": "Opportunity attacks against you have Disadvantage.", "Multiattack Defense": "Once hit, get +4 AC against subsequent attacks.", "Steel Will": "Advantage on saves vs being Frightened." }},
-        11: { title: "Multiattack", options: { "Volley": "Fire at all enemies in a 10ft radius.", "Whirlwind": "Strike all enemies within 5ft of you." }},
-        15: { title: "Superior Defense", options: { "Evasion": "Success on Dex saves = 0 dmg, Failure = half.", "Stand Against Tide": "If an enemy misses, they hit another enemy of your choice.", "Uncanny Dodge": "Use Reaction to halve incoming attack damage." }},
-        "ASI": { title: "Stat Increase", options: { "DEX": "Dexterity +2 (Better Hit/AC)", "WIS": "Wisdom +2 (Better Magic)", "CON": "Constitution +2 (More HP)" }}
+        2: { title: "Fighting Style", options: { "Archery": "+2 to ranged attacks.", "Defense": "+1 to AC.", "Dueling": "+2 to melee dmg (1h)." }},
+        3: { title: "Hunter's Prey", options: { "Colossus Slayer": "Deal +1d8 if target is hurt.", "Giant Killer": "Counter-attack large foes.", "Horde Breaker": "Extra attack on nearby foe." }},
+        7: { title: "Defensive Tactics", options: { "Escape the Horde": "Opp-attacks have Disadvantage.", "Multiattack Defense": "Hit once? +4 AC after.", "Steel Will": "Adv vs Fear." }},
+        11: { title: "Multiattack", options: { "Volley": "AoE Ranged Attack.", "Whirlwind": "AoE Melee Attack." }},
+        15: { title: "Superior Defense", options: { "Evasion": "Dodge AoE spells.", "Stand Against Tide": "Missed? Make them hit others.", "Uncanny Dodge": "Halve damage taken." }},
+        "ASI": { title: "Stat Increase", options: { "DEX": "Dexterity +2", "WIS": "Wisdom +2", "CON": "Constitution +2" }}
     };
 
     const bgFeats = { "Wayfarer": "Alert", "Soldier": "Savage Attacker", "Acolyte": "Magic Initiate", "Criminal": "Alert", "Outlander": "Tough" };
@@ -109,7 +144,6 @@
             stats: { STR: rollStat(), DEX: rollStat(), CON: rollStat(), INT: rollStat(), WIS: rollStat(), CHA: rollStat() },
             feats: [{name: "Origin Feat: " + bgFeats[b], text: "Specialized training from your background."}]
         };
-        // Apply Bonuses
         if(r === "Human") Object.keys(hero.stats).forEach(s => hero.stats[s]++);
         if(r.includes("Elf")) hero.stats.DEX += 2;
         if(r === "Wood Elf") hero.stats.WIS++;
@@ -117,9 +151,9 @@
         if(r === "Half-Orc") { hero.stats.STR += 2; hero.stats.CON++; }
 
         hero.maxHP = 10 + Math.floor((hero.stats.CON-10)/2);
-        if(b === "Outlander") hero.maxHP += 2; // Tough feat
+        if(b === "Outlander") hero.maxHP += 2;
         hero.currentHP = hero.maxHP;
-        hero.feats.push({name: "Favored Enemy", text: "Expertise in tracking and identifying foes."});
+        hero.feats.push({name: "Favored Enemy", text: "Expertise in tracking foes."});
         save();
     }
 
@@ -128,7 +162,6 @@
         let next = hero.level + 1;
         document.getElementById('modal-overlay').classList.remove('hidden');
         document.getElementById('modal').classList.remove('hidden');
-        
         let key = [4,8,12,16,19].includes(next) ? "ASI" : next;
         let content = document.getElementById('modal-content');
         if(rangerBook[key]) {
@@ -136,31 +169,20 @@
             for(let o in rangerBook[key].options) html += `<option value="${o}">${o}</option>`;
             content.innerHTML = html + `</select>`;
         } else {
-            content.innerHTML = `<p>Gaining Ranger Level ${next} Features and HP...</p><input type="hidden" id="choice" value="General">`;
+            content.innerHTML = `<p>Gaining Ranger Level ${next}...</p><input type="hidden" id="choice" value="General">`;
         }
     }
 
     function confirmLevelUp() {
         let c = document.getElementById('choice').value;
         hero.level++;
-        if(hero.stats[c]) hero.stats[c] += 2; // Apply ASI
-        if(rangerBook[hero.level]) {
-            hero.feats.push({name: c, text: rangerBook[hero.level].options[c]});
-        }
-        
-        // Automated Rules
-        if(hero.level === 5) hero.feats.push({name: "Extra Attack", text: "You can attack twice per Attack action."});
-        if(hero.level === 8) hero.feats.push({name: "Land's Stride", text: "Ignore non-magical difficult terrain."});
-        if(hero.level === 10) hero.feats.push({name: "Vanish", text: "You can Hide as a Bonus Action."});
-        if(hero.level === 14) hero.feats.push({name: "Feral Senses", text: "Better awareness of invisible foes."});
-        if(hero.level === 20) hero.feats.push({name: "Foe Slayer", text: "Add Wis mod to attack or damage rolls."});
-        
+        if(hero.stats[c]) hero.stats[c] += 2;
+        if(rangerBook[hero.level]) hero.feats.push({name: c, text: rangerBook[hero.level].options[c]});
+        if(hero.level === 5) hero.feats.push({name: "Extra Attack", text: "Attack twice per action."});
+        if(hero.level === 10) hero.feats.push({name: "Vanish", text: "Hide as a Bonus Action."});
         if([5,9,13,17].includes(hero.level)) hero.prof++;
-        
-        // HP Math: 1d10 (6) + Con Mod
         hero.maxHP += (6 + Math.floor((hero.stats.CON-10)/2));
         hero.currentHP = hero.maxHP;
-        
         document.getElementById('modal-overlay').classList.add('hidden');
         document.getElementById('modal').classList.add('hidden');
         save();
@@ -177,7 +199,6 @@
         document.getElementById('disp-hp').innerText = `${hero.currentHP}/${hero.maxHP}`;
         document.getElementById('disp-prof').innerText = `+${hero.prof}`;
         document.getElementById('disp-ac').innerText = 12 + Math.floor((hero.stats.DEX-10)/2);
-
         let sDiv = document.getElementById('stat-display');
         sDiv.innerHTML = "";
         for(let s in hero.stats) {
