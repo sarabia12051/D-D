@@ -79,6 +79,11 @@
 
     <label style="font-size: 0.8em; color: var(--primary); font-weight: bold;">SELECT BACKGROUND</label>
     <select id="bg-select">
+        <option value="Farmer">Farmer (Feat: Tough)</option>
+        <option value="Guard">Guard (Feat: Alert)</option>
+        <option value="Guide">Guide (Feat: Magic Initiate)</option>
+        <option value="Hermit">Hermit (Feat: Healer)</option>
+        <option value="Merchant">Merchant (Feat: Lucky)</option>
         <option value="Wayfarer">Wayfarer (Feat: Alert)</option>
         <option value="Soldier">Soldier (Feat: Savage Attacker)</option>
         <option value="Acolyte">Acolyte (Feat: Magic Initiate)</option>
@@ -88,7 +93,7 @@
         <option value="Noble">Noble (Feat: Skilled)</option>
     </select>
 
-    <button onclick="generateCharacter()">GENERATE HUNTER</button>
+    <button onclick="generateCharacter()">GENERATE RANGER</button>
 </div>
 
 <div id="main-sheet" class="container hidden">
@@ -130,7 +135,11 @@
         "ASI": { title: "Stat Increase", options: { "DEX": "Dexterity +2", "WIS": "Wisdom +2", "CON": "Constitution +2" }}
     };
 
-    const bgFeats = { "Wayfarer": "Alert", "Soldier": "Savage Attacker", "Acolyte": "Magic Initiate", "Criminal": "Alert", "Outlander": "Tough", "Sage": "Magic Initiate", "Noble": "Skilled" };
+    const bgFeats = { 
+        "Farmer": "Tough", "Guard": "Alert", "Guide": "Magic Initiate", "Hermit": "Healer", "Merchant": "Lucky",
+        "Wayfarer": "Alert", "Soldier": "Savage Attacker", "Acolyte": "Magic Initiate", "Criminal": "Alert", 
+        "Outlander": "Tough", "Sage": "Magic Initiate", "Noble": "Skilled" 
+    };
 
     function rollStat() {
         let rolls = [rand(6), rand(6), rand(6), rand(6)];
@@ -149,7 +158,7 @@
             feats: [{name: "Origin Feat: " + bgFeats[b], text: "Specialized training from your background."}]
         };
         
-        // Comprehensive Race Logic
+        // Full Race Logic Restored
         if(r === "Human") Object.keys(hero.stats).forEach(s => hero.stats[s]++);
         if(r.includes("Elf") || r === "Halfling") hero.stats.DEX += 2;
         if(r === "Wood Elf" || r === "Aasimar") hero.stats.WIS += 1;
@@ -161,7 +170,8 @@
         if(r === "Aasimar") hero.stats.CHA += 2;
 
         hero.maxHP = 10 + Math.floor((hero.stats.CON-10)/2);
-        if(b === "Outlander" || r === "Dwarf") hero.maxHP += 2;
+        // Toughness logic
+        if(b === "Outlander" || r === "Dwarf" || b === "Farmer") hero.maxHP += 2;
         hero.currentHP = hero.maxHP;
         hero.feats.push({name: "Favored Enemy", text: "Expertise in tracking foes."});
         save();
@@ -222,7 +232,7 @@
         let s = localStorage.getItem('ultraRangerSave');
         if(s) { hero = JSON.parse(s); render(); }
     };
-    function reset() { if(confirm("Retire this Hunter?")) { localStorage.removeItem('ultraRangerSave'); location.reload(); } }
+    function reset() { if(confirm("Retire this Ranger?")) { localStorage.removeItem('ultraRangerSave'); location.reload(); } }
 </script>
 </body>
 </html>
