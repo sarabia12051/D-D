@@ -6,32 +6,31 @@
     <title>D&D 2024 Creator</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="icon.png">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
         :root { --primary: #e67e22; --bg: #1a1a1a; --card: #2c3e50; --text: #ecf0f1; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 15px; margin: 0; }
         .container { width: 100%; max-width: 500px; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #444; }
-        h2 { text-align: center; color: var(--primary); margin-top: 0; font-size: 1.4em; }
+        h2 { text-align: center; color: var(--primary); margin-top: 0; font-size: 1.4em; text-transform: uppercase; }
         .input-group { margin-bottom: 10px; }
         label { display: block; margin-bottom: 4px; font-size: 0.8em; color: #bdc3c7; }
         select { width: 100%; padding: 12px; border-radius: 6px; background: #34495e; color: white; border: 1px solid #444; font-size: 16px; }
-        button { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 6px; color: white; font-size: 18px; font-weight: bold; margin: 10px 0; }
+        button { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 6px; color: white; font-size: 18px; font-weight: bold; margin: 10px 0; cursor: pointer; }
         
-        /* Stats Styling */
+        .combat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .combat-box { background: #16212c; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--primary); }
+        .combat-val { font-size: 1.3em; font-weight: bold; color: white; }
+
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .stat-box { background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--primary); }
         .label { font-size: 0.65em; text-transform: uppercase; color: #95a5a6; }
         .value { font-size: 1.5em; font-weight: bold; }
         .modifier { color: var(--primary); font-size: 0.9em; font-weight: bold; }
-
-        /* Combat Styling */
-        .combat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .combat-box { background: #16212c; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--primary); }
-        .combat-val { font-size: 1.3em; font-weight: bold; color: white; }
 
         .traits-box { background: #1a1a1a; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary); font-size: 0.85em; }
         .section-title { color: var(--primary); font-weight: bold; font-size: 0.75em; text-transform: uppercase; display: block; margin-bottom: 5px; }
@@ -45,34 +44,23 @@
     <div class="input-group">
         <label>Species</label>
         <select id="speciesSelect">
-            <option value="Human">Human</option>
-            <option value="Elf">Elf</option>
-            <option value="Dwarf">Dwarf</option>
-            <option value="Halfling">Halfling</option>
-            <option value="Dragonborn">Dragonborn</option>
-            <option value="Goliath">Goliath</option>
-            <option value="Orc">Orc</option>
-            <option value="Gnome">Gnome</option>
-            <option value="Tiefling">Tiefling</option>
-            <option value="Aasimar">Aasimar</option>
+            <option value="Human">Human</option><option value="Elf">Elf</option>
+            <option value="Dwarf">Dwarf</option><option value="Halfling">Halfling</option>
+            <option value="Dragonborn">Dragonborn</option><option value="Goliath">Goliath</option>
+            <option value="Orc">Orc</option><option value="Gnome">Gnome</option>
+            <option value="Tiefling">Tiefling</option><option value="Aasimar">Aasimar</option>
         </select>
     </div>
 
     <div class="input-group">
         <label>Class</label>
         <select id="classSelect">
-            <option value="Fighter">Fighter</option>
-            <option value="Rogue">Rogue</option>
-            <option value="Wizard">Wizard</option>
-            <option value="Cleric">Cleric</option>
-            <option value="Paladin">Paladin</option>
-            <option value="Barbarian">Barbarian</option>
-            <option value="Bard">Bard</option>
-            <option value="Druid">Druid</option>
-            <option value="Monk">Monk</option>
-            <option value="Ranger">Ranger</option>
-            <option value="Sorcerer">Sorcerer</option>
-            <option value="Warlock">Warlock</option>
+            <option value="Fighter">Fighter</option><option value="Rogue">Rogue</option>
+            <option value="Wizard">Wizard</option><option value="Cleric">Cleric</option>
+            <option value="Paladin">Paladin</option><option value="Barbarian">Barbarian</option>
+            <option value="Bard">Bard</option><option value="Druid">Druid</option>
+            <option value="Monk">Monk</option><option value="Ranger">Ranger</option>
+            <option value="Sorcerer">Sorcerer</option><option value="Warlock">Warlock</option>
         </select>
     </div>
 
@@ -116,7 +104,7 @@
     const data = {
         species: {
             "Human": "Inspiration, Extra Origin Feat.", "Elf": "Darkvision, Fey Ancestry.", 
-            "Dwarf": "Darkvision 120ft, +1 HP/lvl.", "Halfling": "Lucky (Reroll 1s), Brave.",
+            "Dwarf": "Darkvision 120ft, +1 HP/lvl.", "Halfling": "Lucky, Brave.",
             "Dragonborn": "Breath Weapon, Resistance.", "Goliath": "Powerful Build, Speed 35ft.",
             "Orc": "Adrenaline Rush, Endurance.", "Gnome": "Gnomish Cunning.",
             "Tiefling": "Fiendish Legacy.", "Aasimar": "Celestial Revelation."
@@ -169,7 +157,6 @@
             document.getElementById(s + "Mod").innerText = (mods[s] >= 0 ? "+" : "") + mods[s];
         }
 
-        // Combat Math
         let hpBonus = (spName === "Dwarf" || bgName === "Soldier" || bgName === "Farmer") ? 2 : 0;
         document.getElementById("hp").innerText = charClass.hitDie + mods.con + hpBonus;
         document.getElementById("ac").innerText = 10 + mods.dex;
