@@ -2,168 +2,196 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>D&D 2024 Creator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Hunter Ranger</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="icon" type="image/png" href="icon.png">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2e7d32">
 
     <style>
-        :root { --primary: #e67e22; --bg: #1a1a1a; --card: #2c3e50; --text: #ecf0f1; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 15px; margin: 0; }
-        .container { width: 100%; max-width: 500px; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #444; }
-        h2 { text-align: center; color: var(--primary); margin-top: 0; font-size: 1.4em; text-transform: uppercase; }
-        .input-group { margin-bottom: 10px; }
-        label { display: block; margin-bottom: 4px; font-size: 0.8em; color: #bdc3c7; }
-        select { width: 100%; padding: 12px; border-radius: 6px; background: #34495e; color: white; border: 1px solid #444; font-size: 16px; }
-        button { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 6px; color: white; font-size: 18px; font-weight: bold; margin: 10px 0; cursor: pointer; }
-        
-        .combat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .combat-box { background: #16212c; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--primary); }
-        .combat-val { font-size: 1.3em; font-weight: bold; color: white; }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .stat-box { background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--primary); }
-        .label { font-size: 0.65em; text-transform: uppercase; color: #95a5a6; }
-        .value { font-size: 1.5em; font-weight: bold; }
-        .modifier { color: var(--primary); font-size: 0.9em; font-weight: bold; }
-
-        .traits-box { background: #1a1a1a; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary); font-size: 0.85em; }
-        .section-title { color: var(--primary); font-weight: bold; font-size: 0.75em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        :root { --primary: #2e7d32; --gold: #fbc02d; --bg: #0a0f0b; --card: #1b261e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #e8f5e9; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .container { background: var(--card); padding: 20px; border-radius: 15px; border: 2px solid var(--primary); width: 100%; max-width: 480px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .stat-box { background: #0c140e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--primary); }
+        .stat-box b { color: var(--gold); font-size: 1.2em; display: block; }
+        button { background: var(--primary); border: none; padding: 16px; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1.1rem; }
+        .hidden { display: none; }
+        select, input { width: 100%; padding: 12px; margin: 8px 0; background: #050a06; color: white; border: 1px solid var(--primary); border-radius: 8px; font-size: 1rem; }
+        #modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border: 3px solid var(--gold); border-radius: 15px; z-index: 100; width: 85%; max-width: 350px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99; }
+        .feature-item { margin-bottom: 10px; padding: 12px; border-left: 4px solid var(--gold); background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.9em; }
+        .feature-item b { color: var(--gold); display: block; margin-bottom: 4px; }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>D&D 2024 Creator</h2>
+<div id="setup-screen" class="container">
+    <h1>Hunter Registry</h1>
+    <input type="text" id="char-name" placeholder="Character Name...">
     
-    <div class="input-group">
-        <label>Species</label>
-        <select id="speciesSelect">
-            <option value="Human">Human</option><option value="Elf">Elf</option>
-            <option value="Dwarf">Dwarf</option><option value="Halfling">Halfling</option>
-            <option value="Dragonborn">Dragonborn</option><option value="Goliath">Goliath</option>
-            <option value="Orc">Orc</option><option value="Gnome">Gnome</option>
-            <option value="Tiefling">Tiefling</option><option value="Aasimar">Aasimar</option>
-        </select>
+    <label>Choose Race</label>
+    <select id="race-select">
+        <option value="Human">Human (+1 All Stats)</option>
+        <option value="Elf">Elf (+2 Dex, Darkvision)</option>
+        <option value="Wood Elf">Wood Elf (+2 Dex, +1 Wis, +5ft Speed)</option>
+        <option value="Dwarf">Dwarf (+2 Con, Advantage vs Poison)</option>
+        <option value="Half-Orc">Half-Orc (+2 Str, +1 Con, Relentless)</option>
+    </select>
+
+    <label>Choose Background</label>
+    <select id="bg-select">
+        <option value="Wayfarer">Wayfarer (Feat: Alert)</option>
+        <option value="Soldier">Soldier (Feat: Savage Attacker)</option>
+        <option value="Acolyte">Acolyte (Feat: Magic Initiate)</option>
+        <option value="Criminal">Criminal (Feat: Alert)</option>
+        <option value="Outlander">Outlander (Feat: Tough)</option>
+    </select>
+
+    <button onclick="generateCharacter()">GENERATE HUNTER</button>
+</div>
+
+<div id="main-sheet" class="container hidden">
+    <h1 id="disp-name" style="margin:0; font-size: 1.5em;"></h1>
+    <p style="text-align:center; color:#888; margin-top:5px;">
+        Level <span id="disp-lvl"></span> <span id="disp-race"></span> Ranger (<span id="disp-bg"></span>)
+    </p>
+
+    <div class="stat-grid" id="stat-display"></div>
+
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <div class="stat-box" style="flex:2; border-color:var(--gold);">HP: <strong id="disp-hp"></strong></div>
+        <div class="stat-box" style="flex:1;">AC: <strong id="disp-ac"></strong></div>
+        <div class="stat-box" style="flex:1;">Prof: <strong id="disp-prof"></strong></div>
     </div>
 
-    <div class="input-group">
-        <label>Class</label>
-        <select id="classSelect">
-            <option value="Fighter">Fighter</option><option value="Rogue">Rogue</option>
-            <option value="Wizard">Wizard</option><option value="Cleric">Cleric</option>
-            <option value="Paladin">Paladin</option><option value="Barbarian">Barbarian</option>
-            <option value="Bard">Bard</option><option value="Druid">Druid</option>
-            <option value="Monk">Monk</option><option value="Ranger">Ranger</option>
-            <option value="Sorcerer">Sorcerer</option><option value="Warlock">Warlock</option>
-        </select>
-    </div>
+    <strong>Hunter's Features & Talents:</strong>
+    <div id="features-list" style="margin-top:10px; height: 280px; overflow-y: auto;"></div>
 
-    <div class="input-group">
-        <label>Background</label>
-        <select id="bgSelect">
-            <option value="Soldier">Soldier (Tough Feat)</option>
-            <option value="Sage">Sage (Skilled Feat)</option>
-            <option value="Acolyte">Acolyte (Magic Initiate)</option>
-            <option value="Criminal">Criminal (Alert Feat)</option>
-            <option value="Wayfarer">Wayfarer (Lucky Feat)</option>
-            <option value="Farmer">Farmer (Tough Feat)</option>
-            <option value="Merchant">Merchant (Lucky Feat)</option>
-        </select>
-    </div>
+    <button onclick="triggerLevelUp()">LEVEL UP</button>
+    <button style="background:#422; margin-top:20px; font-size: 0.8em;" onclick="reset()">RETIRE CHARACTER</button>
+</div>
 
-    <button onclick="generate()">GENERATE CHARACTER</button>
-
-    <div class="combat-row">
-        <div class="combat-box"><div class="label">Armor Class</div><div id="ac" class="combat-val">-</div></div>
-        <div class="combat-box"><div class="label">Hit Points</div><div id="hp" class="combat-val">-</div></div>
-        <div class="combat-box"><div class="label">Initiative</div><div id="init" class="combat-val">-</div></div>
-    </div>
-
-    <div class="stat-grid">
-        <div class="stat-box"><div class="label">STR</div><div id="str" class="value">-</div><div id="strMod" class="modifier"></div></div>
-        <div class="stat-box"><div class="label">DEX</div><div id="dex" class="value">-</div><div id="dexMod" class="modifier"></div></div>
-        <div class="stat-box"><div class="label">CON</div><div id="con" class="value">-</div><div id="conMod" class="modifier"></div></div>
-        <div class="stat-box"><div class="label">INT</div><div id="int" class="value">-</div><div id="intMod" class="modifier"></div></div>
-        <div class="stat-box"><div class="label">WIS</div><div id="wis" class="value">-</div><div id="wisMod" class="modifier"></div></div>
-        <div class="stat-box"><div class="label">CHA</div><div id="cha" class="value">-</div><div id="chaMod" class="modifier"></div></div>
-    </div>
-
-    <div class="traits-box">
-        <span class="section-title">Features & Feats</span>
-        <div id="traitsList">Select options and roll...</div>
-    </div>
+<div id="modal-overlay" class="overlay hidden"></div>
+<div id="modal" class="hidden">
+    <h2 id="modal-title" style="color:var(--gold); margin-top:0;">Level Up</h2>
+    <div id="modal-content"></div>
+    <button onclick="confirmLevelUp()">APPLY CHANGES</button>
 </div>
 
 <script>
-    const data = {
-        species: {
-            "Human": "Inspiration, Extra Origin Feat.", "Elf": "Darkvision, Fey Ancestry.", 
-            "Dwarf": "Darkvision 120ft, +1 HP/lvl.", "Halfling": "Lucky, Brave.",
-            "Dragonborn": "Breath Weapon, Resistance.", "Goliath": "Powerful Build, Speed 35ft.",
-            "Orc": "Adrenaline Rush, Endurance.", "Gnome": "Gnomish Cunning.",
-            "Tiefling": "Fiendish Legacy.", "Aasimar": "Celestial Revelation."
-        },
-        classes: {
-            "Fighter": { hitDie: 10, prio: ["str", "con", "dex", "wis", "cha", "int"] },
-            "Rogue": { hitDie: 8, prio: ["dex", "int", "con", "cha", "wis", "str"] },
-            "Wizard": { hitDie: 6, prio: ["int", "con", "dex", "wis", "cha", "str"] },
-            "Cleric": { hitDie: 8, prio: ["wis", "con", "str", "int", "cha", "dex"] },
-            "Paladin": { hitDie: 10, prio: ["str", "cha", "con", "wis", "dex", "int"] },
-            "Barbarian": { hitDie: 12, prio: ["str", "con", "dex", "wis", "cha", "int"] },
-            "Bard": { hitDie: 8, prio: ["cha", "dex", "con", "wis", "int", "str"] },
-            "Druid": { hitDie: 8, prio: ["wis", "con", "dex", "int", "cha", "str"] },
-            "Monk": { hitDie: 8, prio: ["dex", "wis", "con", "str", "cha", "int"] },
-            "Ranger": { hitDie: 10, prio: ["dex", "wis", "con", "str", "int", "cha"] },
-            "Sorcerer": { hitDie: 6, prio: ["cha", "con", "dex", "int", "wis", "str"] },
-            "Warlock": { hitDie: 8, prio: ["cha", "con", "dex", "int", "wis", "str"] }
-        },
-        bgs: {
-            "Soldier": ["str", "con", "Feat: Tough (+2 HP)"], "Sage": ["int", "con", "Feat: Skilled"],
-            "Acolyte": ["wis", "cha", "Feat: Magic Initiate"], "Criminal": ["dex", "con", "Feat: Alert"],
-            "Wayfarer": ["dex", "wis", "Feat: Lucky"], "Farmer": ["str", "con", "Feat: Tough"],
-            "Merchant": ["int", "cha", "Feat: Lucky"]
-        }
+    let hero = null;
+    const rangerBook = {
+        2: { title: "Fighting Style", options: { "Archery": "+2 to ranged attack rolls.", "Defense": "+1 to Armor Class.", "Dueling": "+2 to damage with 1-handed melee weapons." }},
+        3: { title: "Hunter's Prey", options: { "Colossus Slayer": "Deal +1d8 damage if the target is already hurt.", "Giant Killer": "Use Reaction to counter-attack Large creatures.", "Horde Breaker": "Extra attack against a 2nd target within 5ft." }},
+        7: { title: "Defensive Tactics", options: { "Escape the Horde": "Opportunity attacks against you have Disadvantage.", "Multiattack Defense": "Once hit, get +4 AC against subsequent attacks.", "Steel Will": "Advantage on saves vs being Frightened." }},
+        11: { title: "Multiattack", options: { "Volley": "Fire at all enemies in a 10ft radius.", "Whirlwind": "Strike all enemies within 5ft of you." }},
+        15: { title: "Superior Defense", options: { "Evasion": "Success on Dex saves = 0 dmg, Failure = half.", "Stand Against Tide": "If an enemy misses, they hit another enemy of your choice.", "Uncanny Dodge": "Use Reaction to halve incoming attack damage." }},
+        "ASI": { title: "Stat Increase", options: { "DEX": "Dexterity +2 (Better Hit/AC)", "WIS": "Wisdom +2 (Better Magic)", "CON": "Constitution +2 (More HP)" }}
     };
 
-    function roll4d6() {
-        let rolls = Array.from({length: 4}, () => Math.floor(Math.random() * 6) + 1);
-        return rolls.sort().slice(1).reduce((a, b) => a + b, 0);
+    const bgFeats = { "Wayfarer": "Alert", "Soldier": "Savage Attacker", "Acolyte": "Magic Initiate", "Criminal": "Alert", "Outlander": "Tough" };
+
+    function rollStat() {
+        let rolls = [rand(6), rand(6), rand(6), rand(6)];
+        rolls.sort().shift();
+        return rolls.reduce((a, b) => a + b, 0);
+    }
+    function rand(m) { return Math.floor(Math.random() * m) + 1; }
+
+    function generateCharacter() {
+        let r = document.getElementById('race-select').value;
+        let b = document.getElementById('bg-select').value;
+        hero = {
+            name: document.getElementById('char-name').value || "Strider",
+            race: r, bg: b, level: 1, prof: 2,
+            stats: { STR: rollStat(), DEX: rollStat(), CON: rollStat(), INT: rollStat(), WIS: rollStat(), CHA: rollStat() },
+            feats: [{name: "Origin Feat: " + bgFeats[b], text: "Specialized training from your background."}]
+        };
+        // Apply Bonuses
+        if(r === "Human") Object.keys(hero.stats).forEach(s => hero.stats[s]++);
+        if(r.includes("Elf")) hero.stats.DEX += 2;
+        if(r === "Wood Elf") hero.stats.WIS++;
+        if(r === "Dwarf") hero.stats.CON += 2;
+        if(r === "Half-Orc") { hero.stats.STR += 2; hero.stats.CON++; }
+
+        hero.maxHP = 10 + Math.floor((hero.stats.CON-10)/2);
+        if(b === "Outlander") hero.maxHP += 2; // Tough feat
+        hero.currentHP = hero.maxHP;
+        hero.feats.push({name: "Favored Enemy", text: "Expertise in tracking and identifying foes."});
+        save();
     }
 
-    function generate() {
-        let scores = Array.from({length: 6}, () => roll4d6()).sort((a, b) => b - a);
-        let clsName = document.getElementById("classSelect").value;
-        let bgName = document.getElementById("bgSelect").value;
-        let spName = document.getElementById("speciesSelect").value;
+    function triggerLevelUp() {
+        if(hero.level >= 20) return;
+        let next = hero.level + 1;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+        document.getElementById('modal').classList.remove('hidden');
         
-        let charClass = data.classes[clsName];
-        let charBg = data.bgs[bgName];
-        let final = {};
-        
-        charClass.prio.forEach((stat, i) => final[stat] = scores[i]);
-        final[charBg[0]] += 2;
-        final[charBg[1]] += 1;
-
-        let mods = {};
-        for (let s in final) {
-            mods[s] = Math.floor((final[s] - 10) / 2);
-            document.getElementById(s).innerText = final[s];
-            document.getElementById(s + "Mod").innerText = (mods[s] >= 0 ? "+" : "") + mods[s];
+        let key = [4,8,12,16,19].includes(next) ? "ASI" : next;
+        let content = document.getElementById('modal-content');
+        if(rangerBook[key]) {
+            let html = `<p><b>${rangerBook[key].title}</b></p><select id="choice">`;
+            for(let o in rangerBook[key].options) html += `<option value="${o}">${o}</option>`;
+            content.innerHTML = html + `</select>`;
+        } else {
+            content.innerHTML = `<p>Gaining Ranger Level ${next} Features and HP...</p><input type="hidden" id="choice" value="General">`;
         }
-
-        let hpBonus = (spName === "Dwarf" || bgName === "Soldier" || bgName === "Farmer") ? 2 : 0;
-        document.getElementById("hp").innerText = charClass.hitDie + mods.con + hpBonus;
-        document.getElementById("ac").innerText = 10 + mods.dex;
-        document.getElementById("init").innerText = (mods.dex >= 0 ? "+" : "") + mods.dex;
-        
-        document.getElementById("traitsList").innerHTML = `<strong>${spName}:</strong> ${data.species[spName]}<br><strong>Background:</strong> ${charBg[2]}`;
     }
+
+    function confirmLevelUp() {
+        let c = document.getElementById('choice').value;
+        hero.level++;
+        if(hero.stats[c]) hero.stats[c] += 2; // Apply ASI
+        if(rangerBook[hero.level]) {
+            hero.feats.push({name: c, text: rangerBook[hero.level].options[c]});
+        }
+        
+        // Automated Rules
+        if(hero.level === 5) hero.feats.push({name: "Extra Attack", text: "You can attack twice per Attack action."});
+        if(hero.level === 8) hero.feats.push({name: "Land's Stride", text: "Ignore non-magical difficult terrain."});
+        if(hero.level === 10) hero.feats.push({name: "Vanish", text: "You can Hide as a Bonus Action."});
+        if(hero.level === 14) hero.feats.push({name: "Feral Senses", text: "Better awareness of invisible foes."});
+        if(hero.level === 20) hero.feats.push({name: "Foe Slayer", text: "Add Wis mod to attack or damage rolls."});
+        
+        if([5,9,13,17].includes(hero.level)) hero.prof++;
+        
+        // HP Math: 1d10 (6) + Con Mod
+        hero.maxHP += (6 + Math.floor((hero.stats.CON-10)/2));
+        hero.currentHP = hero.maxHP;
+        
+        document.getElementById('modal-overlay').classList.add('hidden');
+        document.getElementById('modal').classList.add('hidden');
+        save();
+    }
+
+    function save() { localStorage.setItem('ultraRangerSave', JSON.stringify(hero)); render(); }
+    function render() {
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('main-sheet').classList.remove('hidden');
+        document.getElementById('disp-name').innerText = hero.name;
+        document.getElementById('disp-race').innerText = hero.race;
+        document.getElementById('disp-bg').innerText = hero.bg;
+        document.getElementById('disp-lvl').innerText = hero.level;
+        document.getElementById('disp-hp').innerText = `${hero.currentHP}/${hero.maxHP}`;
+        document.getElementById('disp-prof').innerText = `+${hero.prof}`;
+        document.getElementById('disp-ac').innerText = 12 + Math.floor((hero.stats.DEX-10)/2);
+
+        let sDiv = document.getElementById('stat-display');
+        sDiv.innerHTML = "";
+        for(let s in hero.stats) {
+            let m = Math.floor((hero.stats[s]-10)/2);
+            sDiv.innerHTML += `<div class="stat-box"><small>${s}</small><b>${hero.stats[s]}</b><small>${m>=0?'+':''}${m}</small></div>`;
+        }
+        document.getElementById('features-list').innerHTML = hero.feats.map(f => `<div class="feature-item"><b>${f.name}</b>${f.text}</div>`).reverse().join("");
+    }
+
+    window.onload = function() {
+        let s = localStorage.getItem('ultraRangerSave');
+        if(s) { hero = JSON.parse(s); render(); }
+    };
+    function reset() { if(confirm("Retire this Hunter?")) { localStorage.removeItem('ultraRangerSave'); location.reload(); } }
 </script>
 </body>
 </html>
