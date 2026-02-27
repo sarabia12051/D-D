@@ -2,275 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ultimate Ranger Mega-App</title>
     <style>
-        :root { --primary: #2c5e2e; --accent: #d4af37; --bg: #f4f1ea; --text: #2b2b2b; --locked: #8b0000; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 10px; margin: 0; }
-        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid var(--primary); }
-        .locked-card { border-left-color: var(--locked); background: #fff5f5; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 5px; width: 100%; margin: 5px 0; font-weight: bold; }
-        .btn-confirm { background: #28a745; }
-        .btn-cancel { background: #dc3545; }
-        
-        /* Modal Overlay */
+        :root { --primary: #2c5e2e; --accent: #d4af37; --bg: #0d1117; --text: #c9d1d9; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; overscroll-behavior-y: contain; }
+        .card { background: #161b22; border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); border: 1px solid #30363d; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 5px; width: 100%; margin: 5px 0; font-weight: bold; cursor: pointer; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 15px; }
+        .stat-box { border: 1px solid #444; padding: 5px; border-radius: 5px; background: #0d1117; }
         #modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; width: 85%; padding: 20px; border-radius: 15px; text-align: center; }
-        
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; font-size: 0.9em; }
-        .feature-item { padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .modal-box { background: #161b22; width: 85%; padding: 20px; border-radius: 15px; text-align: center; border: 1px solid var(--primary); }
     </style>
 </head>
-<body style="background: #0d1117; color: #c9d1d9; font-family: sans-serif; padding: 15px;">
-<div id="setup-menu" class="card" style="display:block; border: 2px solid #2e7d32; margin-top: 20px;">
-    <h2 style="text-align:center;">Ranger Creator</h2>
-    <input type="text" id="name-input" placeholder="Enter Hero Name" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-    
-<select id="race-input" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px;">
-    <option value="Human">Human (+1 All Stats)</option>
-    <option value="Elf">Elf (+2 DEX, +1 WIS)</option>
-    <option value="Dwarf">Dwarf (+2 CON, +1 STR)</option>
-    <option value="Halfling">Halfling (+2 DEX, +1 CHA)</option>
-    <option value="Tiefling">Tiefling (+2 CHA, +1 INT)</option>
-    <option value="Dragonborn">Dragonborn (+2 STR, +1 CHA)</option>
-    <option value="Gnome">Gnome (+2 INT, +1 CON)</option>
-<option value="Half-Elf">Half-Elf (+2 CHA, +1 DEX, +1 WIS)</option>
-<option value="Half-Orc">Half-Orc (+2 STR, +1 CON)</option>
+<body>
 
-</select>
+<div id="setup-menu" class="card" style="border: 2px solid #2e7d32;">
+    <h2 style="text-align:center;">Ranger Creator</h2>
+    <input type="text" id="name-input" placeholder="Enter Hero Name" style="width:90%; padding:10px; margin-bottom:10px; border-radius:5px;">
+    <select id="race-input" style="width:100%; padding:10px; margin-bottom:10px;">
+        <option value="Human">Human (+1 All Stats)</option>
+        <option value="Elf">Elf (+2 DEX, +1 WIS)</option>
+        <option value="Dwarf">Dwarf (+2 CON, +1 STR)</option>
+        <option value="Halfling">Halfling (+2 DEX, +1 CHA)</option>
+        <option value="Tiefling">Tiefling (+2 CHA, +1 INT)</option>
+        <option value="Dragonborn">Dragonborn (+2 STR, +1 CHA)</option>
+        <option value="Gnome">Gnome (+2 INT, +1 CON)</option>
+        <option value="Half-Elf">Half-Elf (+2 CHA, +1 DEX, +1 WIS)</option>
+        <option value="Half-Orc">Half-Orc (+2 STR, +1 CON)</option>
+    </select>
     <button class="btn" onclick="generateStats()">🎲 Roll Stats</button>
-    <div id="roll-display" style="text-align:center; margin:15px; font-weight:bold; font-size: 1.2em; color: #2e7d32;"></div>
-    
+    <div id="roll-display" style="text-align:center; margin:10px; color: #2e7d32; font-weight:bold;"></div>
     <button class="btn" onclick="finalizeCharacter()" style="background:#2e7d32;">Finalize Character</button>
 </div>
+
+<div id="main-sheet" style="display:none;">
+    <h2 id="display-name" style="text-align: center; margin-bottom: 2px;"></h2>
+    <p id="display-race-class" style="text-align: center; color: #aaa;"></p>
     
-        <h2 id="display-name" style="text-align: center; margin-bottom: 2px;">Character Name</h2>
-        <p id="display-race-class" style="text-align: center; font-size: 0.8em; margin-top: 0; color: #aaa;">Level 1 Ranger</p>
-        
-        <div class="stat-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top:15px; text-align:center;">
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>DEX</strong><br><span id="val-dex" style="font-size:1.2em; color:white;">10</span></div>
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>WIS</strong><br><span id="val-wis" style="font-size:1.2em; color:white;">10</span></div>
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>CON</strong><br><span id="val-con" style="font-size:1.2em; color:white;">10</span></div>
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>STR</strong><br><span id="val-str">10</span></div>
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>INT</strong><br><span id="val-int">10</span></div>
-            <div style="border:1px solid #444; padding:5px; border-radius:5px;"><strong>CHA</strong><br><span id="val-cha">10</span></div>
-        </div>
-
-        <div style="display: flex; justify-content: space-around; margin-top: 15px; border-top: 1px solid #444; padding-top: 10px;">
-            <div><strong>HP:</strong> <span id="val-hp" style="color:#ffd700;">12</span></div>
-            <div><strong>AC:</strong> <span id="val-ac" style="color:#ffd700;">15</span></div>
-            <div><strong>Prof:</strong> +<span id="val-prof">2</span></div>
-        </div>
+    <div class="stat-grid">
+        <div class="stat-box"><strong>DEX</strong><br><span id="val-dex">10</span></div>
+        <div class="stat-box"><strong>WIS</strong><br><span id="val-wis">10</span></div>
+        <div class="stat-box"><strong>CON</strong><br><span id="val-con">10</span></div>
+        <div class="stat-box"><strong>STR</strong><br><span id="val-str">10</span></div>
+        <div class="stat-box"><strong>INT</strong><br><span id="val-int">10</span></div>
+        <div class="stat-box"><strong>CHA</strong><br><span id="val-cha">10</span></div>
     </div>
 
-    <div class="card">
-        <h3>Class Features (Set in Stone)</h3>
-        <div id="feature-list">
-            <div class="feature-item">Lv 1: Favored Enemy</div>
-            <div class="feature-item">Lv 1: Natural Explorer</div>
-        </div>
+    <div style="display: flex; justify-content: space-around; margin-top: 15px; border-top: 1px solid #444; padding-top: 10px;">
+        <div><strong>HP:</strong> <span id="val-hp" style="color:#ffd700;">12</span></div>
+        <div><strong>Prof:</strong> +<span id="val-prof">2</span></div>
     </div>
-    <div class="card" id="spellbook-zone">
-    <h3>Ranger Spellbook</h3>
-    <div id="spell-list">
-        <p style="font-size: 0.8em; color: #666;">Unlock level 2 to choose spells.</p>
+
+    <div class="card" style="margin-top:20px;">
+        <h3>Features & Spells</h3>
+        <div id="feature-list"></div>
     </div>
+
+    <button class="btn" onclick="askLevelUp()">LEVEL UP TO <span id="next-lv-num">2</span></button>
 </div>
 
-<div class="card" id="choice-zone" style="display:none;">
-    <h3 id="choice-title">Special Decision</h3>
-    <div id="choice-buttons"></div>
-</div>
+<div id="modal-overlay"><div class="modal-box"><h2 id="modal-title"></h2><p id="modal-text"></p><button class="btn" id="final-confirm-btn">CONFIRM</button><button class="btn" onclick="closeModal()" style="background:#444;">CANCEL</button></div></div>
 
-    <button class="btn" id="lvl-btn" onclick="askLevelUp()">LEVEL UP TO <span id="next-lv-num">2</span></button>
+<button class="btn" onclick="factoryReset()" style="background:#8b0000; margin-top:50px; opacity:0.6;">⚠️ FACTORY RESET</button>
 
-    <div id="modal-overlay">
-        <div class="modal-box">
-            <h2 id="modal-title">Confirm Choice</h2>
-            <p id="modal-text">This action is permanent.</p>
-            <div id="choice-options"></div>
-            <button class="btn btn-confirm" id="final-confirm-btn">SET IN STONE</button>
-            <button class="btn btn-cancel" onclick="closeModal()">CANCEL</button>
-        </div>
-    </div>
-
-    <script>
-        let tempRolls = [];
+<script>
+let tempRolls = [];
+let marco = { level: 1, hp: 12, name: "", race: "", stats: {dex:10, wis:10, con:10, str:10, int:10, cha:10}, lockedFeatures: ["Favored Enemy", "Natural Explorer"] };
 
 function generateStats() {
-    // Generates 6 random numbers (D&D Style)
-    tempRolls = Array.from({length: 6}, () => Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 8);
-    tempRolls.sort((a, b) => b - a); // Highest rolls first
-    document.getElementById('roll-display').innerText = "Your Potential Stats: " + tempRolls.join(", ");
+    tempRolls = Array.from({length: 6}, () => Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 8).sort((a, b) => b - a);
+    document.getElementById('roll-display').innerText = "Rolls: " + tempRolls.join(", ");
 }
 
 function finalizeCharacter() {
-    let nameInput = document.getElementById('name-input').value;
-    const raceSelection = document.getElementById('race-input').value;
-    if (!nameInput || tempRolls.length === 0) return alert("Enter a name and roll your stats first!");
+    let name = document.getElementById('name-input').value;
+    let race = document.getElementById('race-input').value;
+    if (!name || tempRolls.length === 0) return alert("Roll stats first!");
 
-    // 1. Set the Name and Race
-    marco.name = nameInput;
-    marco.race = raceSelection;
+    marco.name = name; marco.race = race;
+    marco.stats = { dex: tempRolls[0], wis: tempRolls[1], con: tempRolls[2], str: tempRolls[3], int: tempRolls[4], cha: tempRolls[5] };
 
-    // 2. Assign Rolls FIRST (This keeps them from being overwritten)
-    marco.stats = {
-        dex: tempRolls[0], 
-        wis: tempRolls[1],
-        con: tempRolls[2],
-        str: tempRolls[3],
-        int: tempRolls[4],
-        cha: tempRolls[5]
-    };
+    if (race === "Human") Object.keys(marco.stats).forEach(s => marco.stats[s] += 1);
+    if (race === "Elf") { marco.stats.dex += 2; marco.stats.wis += 1; }
+    if (race === "Dwarf") { marco.stats.con += 2; marco.stats.str += 1; }
+    if (race === "Halfling") { marco.stats.dex += 2; marco.stats.cha += 1; }
+    if (race === "Tiefling") { marco.stats.cha += 2; marco.stats.int += 1; }
+    if (race === "Dragonborn") { marco.stats.str += 2; marco.stats.cha += 1; }
+    if (race === "Gnome") { marco.stats.int += 2; marco.stats.con += 1; }
+    if (race === "Half-Elf") { marco.stats.cha += 2; marco.stats.dex += 1; marco.stats.wis += 1; }
+    if (race === "Half-Orc") { marco.stats.str += 2; marco.stats.con += 1; }
 
-    // 3. The Engine: Apply Race Bonuses to the NEW stats
-    if (raceSelection === "Human") { 
-        Object.keys(marco.stats).forEach(s => marco.stats[s] += 1); 
-    }
-    if (raceSelection === "Elf") { marco.stats.dex += 2; marco.stats.wis += 1; }
-    if (raceSelection === "Dwarf") { marco.stats.con += 2; marco.stats.str += 1; }
-    if (raceSelection === "Halfling") { marco.stats.dex += 2; marco.stats.cha += 1; }
-    if (raceSelection === "Tiefling") { marco.stats.cha += 2; marco.stats.int += 1; }
-    if (raceSelection === "Dragonborn") { marco.stats.str += 2; marco.stats.cha += 1; }
-    if (raceSelection === "Gnome") { marco.stats.int += 2; marco.stats.con += 1; }
-    if (raceSelection === "Half-Elf") { marco.stats.cha += 2; marco.stats.dex += 1; marco.stats.wis += 1; }
-    if (raceSelection === "Half-Orc") { marco.stats.str += 2; marco.stats.con += 1; }
-
-    // 4. Update HP based on the new Constitution
     marco.hp = 10 + Math.floor((marco.stats.con - 10) / 2);
-
-    document.getElementById('setup-menu').style.display = 'none';
     saveAndRefresh();
-}
-function factoryReset() {
-    if (confirm("⚠️ PERMANENT DELETE: Are you sure you want to wipe this character and start over?")) {
-        localStorage.removeItem('marco_mega_sheet');
-        location.reload();
-    }
-}
-        // THE RANGER MEGA-DATA LIBRARY
-const RANGER_DATA = {
-    subclasses: {
-        "Hunter": { features: { 3: "Hunter's Prey", 7: "Defensive Tactics", 11: "Multiattack", 15: "Superior Hunter's Defense" } },
-        "Beast Master": { features: { 3: "Ranger's Companion", 7: "Exceptional Training", 11: "Bestial Fury", 15: "Share Spells" } },
-        "Gloom Stalker": { features: { 3: "Dread Ambusher/Umbral Sight", 7: "Iron Mind", 11: "Stalker's Flurry", 15: "Shadowy Dodge" } },
-        "Horizon Walker": { features: { 3: "Planar Warrior", 7: "Ethereal Step", 11: "Distant Strike", 15: "Spectral Defense" } },
-        "Monster Slayer": { features: { 3: "Slayer's Hunter/Sense", 7: "Supernatural Defense", 11: "Magic-User's Nemesis", 15: "Slayer's Counter" } },
-        "Fey Wanderer": { features: { 3: "Dreadful Strike/Otherworldly Glamour", 7: "Beguiling Twist", 11: "Fey Reinforcements", 15: "Misty Wanderer" } },
-        "Swarmkeeper": { features: { 3: "Gathered Swarm", 7: "Wrath of Nature", 11: "Mighty Swarm", 15: "Swarming Dispersal" } },
-        "Drakewarden": { features: { 3: "Draconic Gift/Drake Companion", 7: "Bond of Fang and Scale", 11: "Drake's Breath", 15: "Perfected Bond" } }
-    },
-    spells: {
-        1: ["Alarm", "Animal Friendship", "Cure Wounds", "Detect Magic", "Ensnaring Strike", "Fog Cloud", "Goodberry", "Hail of Thorns", "Hunter's Mark", "Longstrider", "Speak with Animals"],
-        2: ["Barkskin", "Beast Sense", "Darkvision", "Lesser Restoration", "Locate Object", "Pass Without Trace", "Silence", "Spike Growth"],
-        3: ["Conjure Animals", "Conjure Barrage", "Daylight", "Lightning Arrow", "Nondetection", "Plant Growth", "Water Walk"],
-        4: ["Freedom of Movement", "Grasping Vine", "Locate Creature", "Stoneskin"],
-        5: ["Commune with Nature", "Conjure Volley", "Swift Quiver", "Tree Stride"]
-    }
-};
-
-let marco = {
-    level: 1,
-    hp: 12,
-    subclass: null,
-    lockedFeatures: ["Favored Enemy", "Natural Explorer"],
-    spellsKnown: ["Hunter's Mark"],
-    choices: {} // For tactics like Colossus Slayer
-};
-
-// SAFETY LOCK ENGINE
-function requestChange(type, detail, callback) {
-    const modal = document.getElementById('modal-overlay');
-    document.getElementById('modal-title').innerText = "SET IN STONE?";
-    document.getElementById('modal-text').innerText = `You are choosing: ${detail}. This decision cannot be undone.`;
-    modal.style.display = 'flex';
-    
-    document.getElementById('final-confirm-btn').onclick = () => {
-        callback();
-        modal.style.display = 'none';
-        saveAndRefresh();
-    };
 }
 
 function askLevelUp() {
-    let next = marco.level + 1;
-    requestChange("Level Up", `Level ${next}`, () => {
-        marco.level = next;
-        marco.hp += 8; // Avg 6 + 2 Con
-        if(next === 3) promptSubclass();
-    });
-}
-
-function promptSubclass() {
-    let list = Object.keys(RANGER_DATA.subclasses).join(", ");
-    // In a full app, this would be a dropdown, but for logic:
-    let choice = prompt("Choose your Subclass: " + list);
-    if(RANGER_DATA.subclasses[choice]) {
-        marco.subclass = choice;
-    }
+    const modal = document.getElementById('modal-overlay');
+    document.getElementById('modal-title').innerText = "Level Up?";
+    document.getElementById('modal-text').innerText = `Advance to Level ${marco.level + 1}?`;
+    modal.style.display = 'flex';
+    document.getElementById('final-confirm-btn').onclick = () => {
+        marco.level++; marco.hp += (6 + Math.floor((marco.stats.con - 10) / 2));
+        modal.style.display = 'none'; saveAndRefresh();
+    };
 }
 
 function saveAndRefresh() {
+    localStorage.setItem('marco_mega_sheet', JSON.stringify(marco));
+    updateUI();
+}
+
 function updateUI() {
-    // 1. Update Header Info
-    document.getElementById('display-name').innerText = marco.name || "Unnamed Hero";
-    document.getElementById('display-race-class').innerText = `Level ${marco.level} ${marco.race || ''} Ranger`;
+    if (!marco.name) return;
+    document.getElementById('setup-menu').style.display = 'none';
+    document.getElementById('main-sheet').style.display = 'block';
+    document.getElementById('display-name').innerText = marco.name;
+    document.getElementById('display-race-class').innerText = `Level ${marco.level} ${marco.race} Ranger`;
+    document.getElementById('next-lv-num').innerText = marco.level + 1;
     
-    // 2. Update Stat Numbers (The 10s will disappear!)
-    if (marco.stats) {
-        document.getElementById('val-dex').innerText = marco.stats.dex;
-        document.getElementById('val-wis').innerText = marco.stats.wis;
-        document.getElementById('val-con').innerText = marco.stats.con;
-        document.getElementById('val-str').innerText = marco.stats.str;
-        document.getElementById('val-int').innerText = marco.stats.int;
-        document.getElementById('val-cha').innerText = marco.stats.cha;
-    }
-    
-    // 3. Update HP, AC, and Proficiency
+    for (let s in marco.stats) { document.getElementById('val-' + s).innerText = marco.stats[s]; }
     document.getElementById('val-hp').innerText = marco.hp;
     document.getElementById('val-prof').innerText = Math.ceil(1 + (marco.level / 4));
-    
-    // 4. Update Features List
-    let list = document.getElementById('feature-list');
-    list.innerHTML = marco.lockedFeatures.map(f => `<div class="feature-item">🔒 ${f}</div>`).join('');
-
-    // 5. Update Spellbook (Unlocks at Level 2)
-    let spellZone = document.getElementById('spell-list');
-    if (marco.level >= 2) {
-        let available = RANGER_DATA.spells[1] || []; 
-        spellZone.innerHTML = available.map(s => 
-            `<button class="btn" style="background:#4a7c4c; font-size:0.8em; margin:2px;" onclick="learnSpell('${s}')">${s}</button>`
-        ).join('');
-    }
-}
-    // 3. Hunter Tactics (Appears at Level 3 if you are a Hunter)
-    const choiceZone = document.getElementById('choice-zone');
-    if (marco.subclass === "Hunter" && marco.level >= 3 && !marco.choices['Hunter-Prey']) {
-        choiceZone.style.display = 'block';
-        document.getElementById('choice-title').innerText = "Select Hunter's Prey";
-        let tactics = ["Colossus Slayer", "Giant Killer", "Horde Breaker"];
-        document.getElementById('choice-buttons').innerHTML = tactics.map(t => 
-            `<button class="btn" onclick="requestChange('Tactic', '${t}', () => { marco.choices['Hunter-Prey'] = '${t}'; marco.lockedFeatures.push('Hunter: ${t}'); })">${t}</button>`
-        ).join('');
-    } else {
-        choiceZone.style.display = 'none';
-    }
+    document.getElementById('feature-list').innerHTML = marco.lockedFeatures.map(f => `<div>🔒 ${f}</div>`).join('');
 }
 
-// Helper to handle permanent spell learning
-function learnSpell(spellName) {
-    if (marco.spellsKnown.includes(spellName)) return;
-    requestChange("Learn Spell", spellName, () => {
-        marco.spellsKnown.push(spellName);
-        marco.lockedFeatures.push(`Spell: ${spellName}`);
-    });
-}
-        function load() {
+function factoryReset() { if (confirm("Wipe character?")) { localStorage.removeItem('marco_mega_sheet'); location.reload(); } }
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+window.onload = () => {
     let d = localStorage.getItem('marco_mega_sheet');
     if (d) { marco = JSON.parse(d); updateUI(); }
-}
-
-window.onload = load;
+};
 </script>
-<button class="btn" onclick="factoryReset()" style="background:#8b0000; margin: 40px auto; display: block; width: 80%; opacity: 0.7; font-size: 0.8em;">⚠️ FACTORY RESET CHARACTER</button>
+</body>
 </html>
